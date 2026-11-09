@@ -1,0 +1,507 @@
+{
+  "meta": {
+    "fonte": "img/2_planta14.webp (planta baixa do RU UFSCar São Carlos, Graco Projetos, 2010)",
+    "escala_px_por_m": 8.2,
+    "origem_px": [
+      269.0,
+      388.5
+    ],
+    "precisao_m": 0.5,
+    "convencao": "origem no canto inferior esquerdo do edifício na folha; X para a direita, Y para cima"
+  },
+  "malha": {
+    "step": 0.5,
+    "largura": 29.3,
+    "comprimento": 43.3,
+    "z_ref": 1.1
+  },
+  "e_dht22": 0.5,
+  "tipos_raio": {
+    "salao": {
+      "dT_max": 1.0,
+      "g_xy": 0.2
+    },
+    "cozinha": {
+      "dT_max": 1.0,
+      "g_xy": 0.35
+    },
+    "camara": {
+      "dT_max": 0.7,
+      "g_xy": 0.13333333333333333
+    }
+  },
+  "grupos": [
+    "salao",
+    "mesas",
+    "balcoes",
+    "cozinha",
+    "preparo",
+    "camaras",
+    "despensa",
+    "apoio"
+  ],
+  "salas": [
+    {
+      "id": "1",
+      "nome": "Salão de refeições",
+      "grupo": "salao",
+      "peso": 15,
+      "raio": "salao",
+      "retangulos": [
+        [
+          0,
+          0,
+          29.3,
+          21.8
+        ],
+        [
+          9.5,
+          21.8,
+          19.8,
+          25.7
+        ]
+      ],
+      "recortes": [
+        [
+          0,
+          7.1,
+          7.5,
+          11.2
+        ],
+        [
+          21.9,
+          7.1,
+          29.3,
+          11.2
+        ]
+      ],
+      "subregioes": [
+        {
+          "id": "1m",
+          "nome": "Áreas de mesas (maior fluxo de pessoas)",
+          "grupo": "mesas",
+          "peso": 20,
+          "raio": "salao",
+          "retangulos": [
+            [
+              0.3,
+              0.3,
+              29.0,
+              7.1
+            ],
+            [
+              7.5,
+              7.1,
+              21.9,
+              11.2
+            ],
+            [
+              0.3,
+              11.2,
+              6.6,
+              19.8
+            ],
+            [
+              22.7,
+              11.2,
+              29.0,
+              19.8
+            ]
+          ],
+          "confirmar": true
+        },
+        {
+          "id": "1b",
+          "nome": "Balcões térmicos",
+          "grupo": "balcoes",
+          "peso": 20,
+          "raio": "cozinha",
+          "retangulos": [
+            [
+              10.5,
+              12.0,
+              18.5,
+              17.0
+            ]
+          ],
+          "suporte": true,
+          "confirmar": true
+        },
+        {
+          "id": "1c",
+          "nome": "Balcão self-service em U",
+          "grupo": "balcoes",
+          "peso": 20,
+          "raio": "cozinha",
+          "retangulos": [
+            [
+              12.0,
+              20.0,
+              16.5,
+              23.0
+            ]
+          ],
+          "suporte": true,
+          "confirmar": true
+        }
+      ]
+    },
+    {
+      "id": "2",
+      "nome": "Higienização",
+      "grupo": "apoio",
+      "peso": 8,
+      "raio": "salao",
+      "retangulos": [
+        [
+          2.1,
+          21.8,
+          9.5,
+          25.7
+        ]
+      ]
+    },
+    {
+      "id": "3",
+      "nome": "Devolução e lavagem de bandejas",
+      "grupo": "apoio",
+      "peso": 8,
+      "raio": "salao",
+      "retangulos": [
+        [
+          19.8,
+          21.8,
+          27.3,
+          25.7
+        ],
+        [
+          22.0,
+          25.7,
+          27.3,
+          30.0
+        ]
+      ]
+    },
+    {
+      "id": "4",
+      "nome": "Cozinha / cocção",
+      "grupo": "cozinha",
+      "peso": 20,
+      "raio": "cozinha",
+      "retangulos": [
+        [
+          7.5,
+          25.7,
+          22.0,
+          34.8
+        ]
+      ]
+    },
+    {
+      "id": "5",
+      "nome": "Escritório da nutricionista",
+      "grupo": "apoio",
+      "peso": 6,
+      "raio": "salao",
+      "retangulos": [
+        [
+          2.1,
+          25.7,
+          7.5,
+          30.0
+        ]
+      ]
+    },
+    {
+      "id": "6",
+      "nome": "Preparo de carnes",
+      "grupo": "preparo",
+      "peso": 25,
+      "raio": "salao",
+      "retangulos": [
+        [
+          4.5,
+          30.0,
+          7.5,
+          34.8
+        ]
+      ]
+    },
+    {
+      "id": "7",
+      "nome": "Câmaras frigoríficas",
+      "grupo": "camaras",
+      "peso": 25,
+      "raio": "camara",
+      "retangulos": [
+        [
+          0,
+          30.0,
+          4.5,
+          43.3
+        ]
+      ],
+      "exige_sensor": true
+    },
+    {
+      "id": "8",
+      "nome": "Despensa",
+      "grupo": "despensa",
+      "peso": 12,
+      "raio": "salao",
+      "retangulos": [
+        [
+          4.5,
+          36.8,
+          11.3,
+          43.3
+        ]
+      ]
+    },
+    {
+      "id": "9",
+      "nome": "Depósito de caixas",
+      "grupo": "apoio",
+      "peso": 6,
+      "raio": "salao",
+      "retangulos": [
+        [
+          11.3,
+          39.5,
+          14.7,
+          43.3
+        ]
+      ]
+    },
+    {
+      "id": "10",
+      "nome": "Pré-seleção",
+      "grupo": "apoio",
+      "peso": 10,
+      "raio": "salao",
+      "retangulos": [
+        [
+          11.3,
+          37.2,
+          14.7,
+          39.5
+        ]
+      ]
+    },
+    {
+      "id": "11",
+      "nome": "Recebimento",
+      "grupo": "apoio",
+      "peso": 8,
+      "raio": "salao",
+      "retangulos": [
+        [
+          14.7,
+          36.8,
+          18.8,
+          43.3
+        ]
+      ]
+    },
+    {
+      "id": "12",
+      "nome": "Escritório",
+      "grupo": "apoio",
+      "peso": 6,
+      "raio": "salao",
+      "retangulos": [
+        [
+          18.8,
+          39.5,
+          22.0,
+          43.3
+        ]
+      ]
+    },
+    {
+      "id": "13",
+      "nome": "Depósito de material de limpeza",
+      "grupo": "apoio",
+      "peso": 4,
+      "raio": "salao",
+      "retangulos": [
+        [
+          22.0,
+          30.0,
+          24.6,
+          34.8
+        ]
+      ]
+    },
+    {
+      "id": "14",
+      "nome": "Lavagem de carros e caixas",
+      "grupo": "apoio",
+      "peso": 6,
+      "raio": "salao",
+      "retangulos": [
+        [
+          24.6,
+          30.0,
+          29.3,
+          34.8
+        ]
+      ]
+    },
+    {
+      "id": "15a",
+      "nome": "Vestiário 1",
+      "grupo": "apoio",
+      "peso": 4,
+      "raio": "salao",
+      "retangulos": [
+        [
+          22.0,
+          36.8,
+          25.5,
+          43.3
+        ]
+      ]
+    },
+    {
+      "id": "15b",
+      "nome": "Vestiário 2",
+      "grupo": "apoio",
+      "peso": 4,
+      "raio": "salao",
+      "retangulos": [
+        [
+          25.5,
+          36.8,
+          29.3,
+          43.3
+        ]
+      ]
+    },
+    {
+      "id": "C1",
+      "nome": "Corredor técnico",
+      "grupo": "apoio",
+      "peso": 4,
+      "raio": "salao",
+      "retangulos": [
+        [
+          4.5,
+          34.8,
+          22.0,
+          36.8
+        ]
+      ]
+    },
+    {
+      "id": "C2",
+      "nome": "Circulação oeste",
+      "grupo": "apoio",
+      "peso": 4,
+      "raio": "salao",
+      "retangulos": [
+        [
+          0,
+          21.8,
+          2.1,
+          30.0
+        ]
+      ]
+    },
+    {
+      "id": "C3",
+      "nome": "Circulação leste",
+      "grupo": "apoio",
+      "peso": 4,
+      "raio": "salao",
+      "retangulos": [
+        [
+          27.3,
+          21.8,
+          29.3,
+          30.0
+        ]
+      ]
+    }
+  ],
+  "portas_externas": {
+    "raio_exclusao": 1.5,
+    "pontos": [
+      {
+        "id": "fachada_1",
+        "x": 6.8,
+        "y": 0.0,
+        "confirmar": true
+      },
+      {
+        "id": "fachada_2",
+        "x": 15.0,
+        "y": 0.0,
+        "confirmar": true
+      },
+      {
+        "id": "fachada_3",
+        "x": 22.7,
+        "y": 0.0,
+        "confirmar": true
+      },
+      {
+        "id": "salao_oeste",
+        "x": 0.0,
+        "y": 13.0,
+        "confirmar": true
+      },
+      {
+        "id": "salao_leste",
+        "x": 29.3,
+        "y": 13.0,
+        "confirmar": true
+      },
+      {
+        "id": "acesso_oeste",
+        "x": 0.0,
+        "y": 26.0,
+        "confirmar": true
+      },
+      {
+        "id": "acesso_leste",
+        "x": 29.3,
+        "y": 26.0,
+        "confirmar": true
+      },
+      {
+        "id": "doca_recebimento",
+        "x": 16.8,
+        "y": 43.3,
+        "confirmar": true
+      }
+    ]
+  },
+  "equipamentos_vapor": [
+    {
+      "id": "bancada_coccao_leste",
+      "retangulo": [
+        20.2,
+        28.0,
+        21.3,
+        33.0
+      ],
+      "margem": 1.0,
+      "confirmar": true
+    }
+  ],
+  "pilares": [
+    {
+      "id": "P1",
+      "x": 14.7,
+      "y": 7.5,
+      "confirmar": true
+    },
+    {
+      "id": "P2",
+      "x": 14.7,
+      "y": 11.0,
+      "confirmar": true
+    }
+  ]
+}

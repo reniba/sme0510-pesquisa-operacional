@@ -1,0 +1,435 @@
+{
+  "meta": {
+    "nome": "Salão de refeições do RU UFSCar",
+    "fonte": "img/2_planta14.webp (planta baixa do RU UFSCar São Carlos, Graco Projetos, 2010)",
+    "escala_px_por_m": 8.2,
+    "origem_px": [
+      269.0,
+      388.5
+    ],
+    "precisao_m": 0.5,
+    "convencao": "mesmas coordenadas do cenário RU: origem no canto inferior esquerdo do edifício",
+    "pesos": "a_i ~ exposição dos ocupantes (densidade de pessoas x tempo de permanência), em escala 2-20"
+  },
+  "malha": {
+    "step": 1.0,
+    "largura": 29.3,
+    "comprimento": 25.7,
+    "z_ref": 1.1
+  },
+  "sensor": {
+    "modelo": "SHT31",
+    "erro": 0.2,
+    "fonte": "Sensirion SHT31: ±0,2 °C típico (0–90 °C); confirmar no datasheet"
+  },
+  "candidatos": {
+    "modo": "malha",
+    "descricao": "sensor suspenso do teto: todo ponto da malha é candidato, exceto as exclusões"
+  },
+  "tipos_raio": {
+    "salao": {
+      "dT_max": 1.0,
+      "g_xy": 0.2
+    },
+    "balcao": {
+      "dT_max": 1.0,
+      "g_xy": 0.35
+    }
+  },
+  "linha_de_visada": true,
+  "grupos": [
+    "mesas",
+    "servico",
+    "balcoes",
+    "corredor_principal",
+    "corredor_mesas",
+    "circulacao"
+  ],
+  "salas": [
+    {
+      "id": "1",
+      "nome": "Salão de refeições",
+      "grupo": "circulacao",
+      "peso": 4,
+      "raio": "salao",
+      "retangulos": [
+        [
+          0,
+          0,
+          29.3,
+          21.8
+        ],
+        [
+          9.5,
+          21.8,
+          19.8,
+          25.7
+        ]
+      ],
+      "recortes": [
+        [
+          0,
+          7.1,
+          7.5,
+          11.2
+        ],
+        [
+          21.9,
+          7.1,
+          29.3,
+          11.2
+        ]
+      ],
+      "subregioes": [
+        {
+          "id": "CP",
+          "nome": "Corredor principal (entradas, eixo central, hall)",
+          "grupo": "corredor_principal",
+          "peso": 10,
+          "raio": "salao",
+          "retangulos": [
+            [
+              0,
+              19.0,
+              29.3,
+              21.8
+            ],
+            [
+              9.5,
+              21.8,
+              19.8,
+              25.7
+            ],
+            [
+              7.5,
+              11.2,
+              21.9,
+              19.0
+            ]
+          ]
+        },
+        {
+          "id": "CM",
+          "nome": "Corredores entre blocos de mesas",
+          "grupo": "corredor_mesas",
+          "peso": 6,
+          "raio": "salao",
+          "retangulos": [
+            [
+              0.3,
+              3.0,
+              29.0,
+              4.2
+            ],
+            [
+              6.6,
+              4.2,
+              7.5,
+              7.1
+            ],
+            [
+              9.0,
+              4.2,
+              9.8,
+              11.2
+            ],
+            [
+              12.3,
+              4.2,
+              13.4,
+              11.2
+            ],
+            [
+              16.3,
+              4.2,
+              17.0,
+              11.2
+            ],
+            [
+              20.0,
+              4.2,
+              22.6,
+              11.2
+            ],
+            [
+              6.6,
+              11.2,
+              7.5,
+              19.0
+            ],
+            [
+              21.9,
+              11.2,
+              22.7,
+              19.0
+            ]
+          ]
+        },
+        {
+          "id": "M",
+          "nome": "Mesas",
+          "grupo": "mesas",
+          "peso": 20,
+          "raio": "salao",
+          "suporte": "mesa",
+          "retangulos": [
+            [
+              0.3,
+              0.3,
+              29.0,
+              3.0
+            ],
+            [
+              0.3,
+              4.2,
+              6.6,
+              7.1
+            ],
+            [
+              22.6,
+              4.2,
+              29.0,
+              7.1
+            ],
+            [
+              7.5,
+              4.2,
+              9.0,
+              11.2
+            ],
+            [
+              9.8,
+              4.2,
+              12.3,
+              11.2
+            ],
+            [
+              13.4,
+              4.2,
+              16.3,
+              11.2
+            ],
+            [
+              17.0,
+              4.2,
+              20.0,
+              11.2
+            ],
+            [
+              0.3,
+              11.3,
+              6.6,
+              18.9
+            ],
+            [
+              22.7,
+              11.3,
+              29.0,
+              18.9
+            ]
+          ],
+          "confirmar": true
+        },
+        {
+          "id": "SV",
+          "nome": "Fila e serviço diante dos balcões",
+          "grupo": "servico",
+          "peso": 16,
+          "raio": "balcao",
+          "retangulos": [
+            [
+              10.0,
+              12.3,
+              19.3,
+              17.8
+            ],
+            [
+              11.8,
+              19.5,
+              16.8,
+              23.5
+            ]
+          ],
+          "confirmar": true
+        },
+        {
+          "id": "B",
+          "nome": "Balcões térmicos (equipamento)",
+          "grupo": "balcoes",
+          "peso": 4,
+          "raio": "balcao",
+          "retangulos": [
+            [
+              11.0,
+              12.9,
+              11.8,
+              17.4
+            ],
+            [
+              14.0,
+              12.9,
+              15.0,
+              17.4
+            ],
+            [
+              17.1,
+              12.9,
+              18.2,
+              17.4
+            ],
+            [
+              12.3,
+              20.0,
+              16.3,
+              23.0
+            ]
+          ],
+          "confirmar": true
+        }
+      ]
+    }
+  ],
+  "divisorias": [
+    {
+      "id": "ala_oeste",
+      "seg": [
+        0.0,
+        19.0,
+        7.3,
+        19.0
+      ],
+      "confirmar": true
+    },
+    {
+      "id": "ala_oeste_topo",
+      "seg": [
+        7.3,
+        18.4,
+        7.3,
+        19.0
+      ],
+      "confirmar": true
+    },
+    {
+      "id": "ala_leste",
+      "seg": [
+        22.0,
+        19.0,
+        29.3,
+        19.0
+      ],
+      "confirmar": true
+    },
+    {
+      "id": "ala_leste_topo",
+      "seg": [
+        22.0,
+        18.3,
+        22.0,
+        19.0
+      ],
+      "confirmar": true
+    }
+  ],
+  "portas_externas": {
+    "raio_exclusao": 1.5,
+    "pontos": [
+      {
+        "id": "entrada_oeste",
+        "x": 0.0,
+        "y": 20.4,
+        "confirmar": true
+      },
+      {
+        "id": "entrada_leste",
+        "x": 29.3,
+        "y": 20.4,
+        "confirmar": true
+      },
+      {
+        "id": "porta_oeste_ala",
+        "x": 0.0,
+        "y": 17.0,
+        "confirmar": true
+      },
+      {
+        "id": "porta_leste_ala",
+        "x": 29.3,
+        "y": 16.9,
+        "confirmar": true
+      },
+      {
+        "id": "saida_sul_oeste",
+        "x": 7.3,
+        "y": 0.0,
+        "confirmar": true
+      },
+      {
+        "id": "saida_sul_leste",
+        "x": 22.2,
+        "y": 0.0,
+        "confirmar": true
+      }
+    ]
+  },
+  "fontes_calor": [
+    {
+      "id": "balcao_1",
+      "retangulo": [
+        11.0,
+        12.9,
+        11.8,
+        17.4
+      ],
+      "margem": 1.0,
+      "confirmar": true
+    },
+    {
+      "id": "balcao_2",
+      "retangulo": [
+        14.0,
+        12.9,
+        15.0,
+        17.4
+      ],
+      "margem": 1.0,
+      "confirmar": true
+    },
+    {
+      "id": "balcao_3",
+      "retangulo": [
+        17.1,
+        12.9,
+        18.2,
+        17.4
+      ],
+      "margem": 1.0,
+      "confirmar": true
+    },
+    {
+      "id": "balcao_U",
+      "retangulo": [
+        12.3,
+        20.0,
+        16.3,
+        23.0
+      ],
+      "margem": 1.0,
+      "confirmar": true
+    }
+  ],
+  "pilares": [
+    {
+      "id": "P1",
+      "x": 14.7,
+      "y": 7.5,
+      "confirmar": true
+    },
+    {
+      "id": "P2",
+      "x": 14.7,
+      "y": 11.0,
+      "confirmar": true
+    }
+  ]
+}

@@ -1,0 +1,2 @@
+p,tempo_s,status,otimo,n_vars,n_restr,cob_total_pct,cob_mesas_pct,cob_servico_pct,cob_balcoes_pct,cob_corredor_principal_pct,cob_corredor_mesas_pct,cob_circulacao_pct,sensores
+10,0.3875,Optimal,True,1140,615,75.1,90.33,24.0,16.67,49.15,77.33,0.0,"(3.50,3.50); (3.50,15.50); (9.50,11.50); (10.50,3.50); (10.50,18.50); (16.50,8.50); (17.50,2.50); (17.50,21.50); (25.50,3.50); (25.50,15.50)"
