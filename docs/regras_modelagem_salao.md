@@ -192,7 +192,86 @@ Sensores escolhidos para p = 10, com coordenadas em metros:
 
 ---
 
-## 4. Limitações e itens a confirmar
+## 4. Comparação com o K-Means (Qin et al., 2023)
+
+Para medir o valor da otimização inteira, o MCLP é comparado com um baseline geométrico, com as regras abaixo.
+
+- **R23. K-Means ponderado.** Agrupa os 626 pontos de demanda em `p` clusters, com cada ponto ponderado por `a_i`.
+  - O primeiro centroide é sorteado com probabilidade proporcional a `a_i`; os demais, proporcional a `a_i · d²` (K-Means++ ponderado).
+  - A iteração de Lloyd atribui cada ponto ao centroide mais próximo e recalcula cada centroide como a média ponderada do cluster, até a variação ficar abaixo de `10⁻⁴ m`. Cluster vazio é reposicionado no ponto de maior `a_i · d`.
+  - Os pontos sem candidato ao alcance também entram no agrupamento, porque o método geométrico só vê as coordenadas.
+- **R24. Snapping.** Cada centroide contínuo vai para o candidato `j ∈ J` mais próximo ainda não escolhido, sem repetição. Os clusters de maior peso escolhem primeiro. Assim o sensor respeita as exclusões de portas e balcões (R18 e R19).
+- **R25. Avaliação idêntica.** A solução do K-Means é avaliada com a mesma matriz `N_i`, incluindo a linha de visada, e os mesmos pesos `a_i`. Como os sensores são `p` pontos de `J`, ela é uma solução viável do MCLP e nunca pode superar o ótimo.
+- **R26. Sementes.** Para cada `p` de 1 a 15 usam-se 5 sementes (42 a 46). O ganho é calculado contra a **melhor** semente, o que é favorável ao K-Means; a média das sementes também é registrada.
+
+| p | MCLP | K-Means (melhor de 5) | Ganho |
+|---|---|---|---|
+| 1 | 10,2% | 6,4% | 3,8 p.p. |
+| 3 | 28,7% | 19,2% | 9,6 p.p. |
+| 5 | 46,2% | 38,5% | 7,8 p.p. |
+| 10 | 75,1% | 72,1% | 3,0 p.p. |
+| 15 | 88,2% | 84,7% | 3,5 p.p. |
+
+O ganho médio é de 5,3 p.p., com máximo de 9,6 p.p. em p = 3. O K-Means não empata com o ótimo em nenhum dos 15 valores de `p`. O motivo é que ele minimiza a distância aos pontos, não maximiza a cobertura dentro do raio, e o snapping ainda o afasta do centroide.
+
+---
+
+## 5. Comparação entre malhas (1,0 m x 0,5 m)
+
+- **R27. Malha de 0,5 m.** Usa as mesmas regras R1 a R20, com passo de 0,5 m. Resultam 2.503 pontos de demanda, 2.070 candidatos e 297.960 ligações de cobertura. A faixa de "circulação geral" junto às paredes volta a ter pontos.
+- **R28. Malha de referência.** Cada solução, de qualquer malha ou método, é avaliada também nos pontos da malha de 0,5 m. Um ponto conta como coberto se algum sensor, na posição exata escolhida, estiver no mesmo cômodo, a uma distância no máximo igual ao raio da zona do ponto e com linha de visada livre.
+- **R29. Tempos.** Para o MCLP, conta o tempo do CBC; para o K-Means, a soma das 5 sementes. O tempo de construção da malha é registrado à parte. O limite é de 600 s por modelo.
+
+Cobertura de todas as soluções avaliada na mesma malha de referência (0,5 m), com tempos de solução:
+
+| p | MCLP 1,0 m | MCLP 0,5 m | K-Means 1,0 m | K-Means 0,5 m | Tempo MCLP 1,0 m | Tempo MCLP 0,5 m |
+|---|---|---|---|---|---|---|
+| 1 | 10,3% | 10,7% | 7,4% | 6,3% | 0,2 s | 1,1 s |
+| 5 | 49,7% | 48,7% | 41,4% | 39,8% | 0,2 s | 1,4 s |
+| 10 | 77,9% | 77,1% | 75,8% | 74,4% | 0,2 s | 14,0 s |
+| 12 | 82,1% | 83,2% | 80,0% | 80,7% | 2,9 s | 42,0 s |
+| 15 | 88,5% | 90,2% | 85,4% | 86,1% | 3,7 s | 23,4 s |
+
+- **Custo:** a malha de 0,5 m tem 15 vezes mais ligações de cobertura (298 mil contra 19 mil). O MCLP somou 208 s nela (máximo de 63 s, em p = 14), contra 16 s na malha de 1 m. O K-Means levou 4,5 s e 1,2 s, respectivamente, somando 5 sementes.
+- **Qualidade:** refinar a malha muda pouco a cobertura, menos de 2 p.p., e nem sempre para melhor. Até p = 11, a solução da malha de 1 m cobre um pouco mais na referência que a da malha de 0,5 m.
+  - As posições da malha de 1 m (x,5) não são candidatas na de 0,5 m (x,25 e x,75), então a malha fina não contém a solução da grossa.
+  - Um sensor num vértice da malha fina alcança 208 pontos dela num raio de 4 m, contra 197 se estiver sobre um ponto da própria malha.
+  - A partir de p = 12, a malha de 0,5 m passa à frente, com até +1,8 p.p.
+- **Método:** o MCLP supera o K-Means nas duas malhas e em todos os p, por 1,7 a 12,4 p.p. na referência (comparando métodos na mesma malha).
+- Todos os 30 MCLP foram provados ótimos (limite de 600 s por modelo). A execução completa levou cerca de 4 minutos.
+
+---
+
+## 6. Comparação com uma escolha manual
+
+- **R30. Posições manuais.** São as 12 posições marcadas pelo grupo em `img/estimativa_sensores.png`, convertidas para metros pela moldura dos eixos (cerca de 15,9 px/m, precisão de ~0,1 m) e guardadas em `data/salao_sensores_manuais.json`. Nenhuma viola as exclusões R18 e R19.
+- **R31. Avaliação exata.** As posições manuais são avaliadas onde estão, sem ajuste à malha, com as regras R12 a R14, na malha de 1 m e na de 0,5 m. O MCLP e o K-Means são resolvidos com o mesmo `p = 12`.
+
+| Método | Cobertura (malha 1 m) | Cobertura (malha 0,5 m) | Mesas | Fila/serviço | Tempo |
+|---|---|---|---|---|---|
+| Escolha do grupo | 73,6% | 74,3% | 86,3% | 6,0% | — |
+| K-Means (melhor de 5) | 77,6% | 80,0% | 92,0% | 16,0% | 0,09 s |
+| MCLP (ótimo) | **80,8%** | **82,1%** | **93,7%** | **34,0%** | 2,8 s |
+
+---
+
+## 7. Sensibilidade ao sensor: DHT22 x SHT31
+
+- **R32. Troca de sensor.** O DHT22 tem erro típico de ±0,5 °C, contra ±0,2 °C do SHT31. Pela regra R9, o raio passa a ser S = (1,0 − 0,5)/g: 2,5 m nas mesas e corredores e 1,43 m perto dos balcões. Todos os raios ficam multiplicados por 0,625, e o experimento é reproduzido com `--fator-raio 0.625` (saídas em `results/salao_raio062/`). As demais regras não mudam.
+
+| | SHT31 (±0,2 °C) | DHT22 (±0,5 °C) |
+|---|---|---|
+| Raio nas mesas / perto dos balcões | 4,0 m / 2,29 m | 2,5 m / 1,43 m |
+| Pontos sem candidato ao alcance | 12 | 40 |
+| Cobertura com 5 / 10 / 15 / 20 sensores | 46,2% / 75,1% / 88,2% / 97,2% | 20,7% / 39,8% / 56,2% / 68,9% |
+| Sensores para chegar a 75% | 10 | 23 (75,5%) |
+| Sensores para cobrir tudo o que é alcançável (LSCP) | 23 (98,4%) | 42 (96,1%) |
+
+Para a mesma cobertura são necessários 2,3 vezes mais pontos de medição com DHT22. Logo, o SHT31 compensa se cada ponto com ele custar menos de 2,3 vezes o ponto com DHT22. Como a placa ESP32 e a instalação entram nos dois casos, a diferença de custo por ponto tende a ser menor que a diferença de preço entre os sensores.
+
+---
+
+## 8. Limitações e itens a confirmar
 
 1. **Altura do sensor suspenso.** O modelo supõe que o sensor mede o ar a 1,1 m. Na prática, um sensor pendurado acima das cabeças fica a 2–2,5 m de altura, e o raio teria de ser corrigido pelo gradiente vertical: `S = (ΔT_max − e − g_z·Δz) / g`.
 2. **Premissas sem fonte verificada:** os gradientes 0,20 e 0,35 °C/m, a tolerância de 1,0 °C e os pesos de exposição.
