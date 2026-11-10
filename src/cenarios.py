@@ -25,7 +25,8 @@ def carregar_ru(incluir_balcoes=False):
     return construir_ambiente_ru(incluir_balcoes=incluir_balcoes)
 
 
-def carregar_salao(mesas=False):
+def carregar_salao(mesas=False, passo=None, fator_raio=1.0):
     """Só o salão de refeições, com mesas e corredores detalhados. `mesas=True` permite
     fixar sensores nas bordas dos blocos de mesas voltadas para os corredores."""
-    return construir_ambiente_ru(GEOMETRIA_SALAO, suportes={"mesa"} if mesas else ())
+    return construir_ambiente_ru(GEOMETRIA_SALAO, suportes={"mesa"} if mesas else (), passo=passo,
+                                fator_raio=fator_raio)

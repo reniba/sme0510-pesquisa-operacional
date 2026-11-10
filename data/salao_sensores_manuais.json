@@ -1,0 +1,11 @@
+{
+  "descricao": "Posições escolhidas arbitrariamente pelo grupo (sem otimização), lidas das marcações amarelas de img/estimativa_sensores.png",
+  "fonte": "img/estimativa_sensores.png",
+  "calibracao": "moldura dos eixos: x 33-530 px = -1,0 a 30,3 m; y 74-515 px = 26,7 a -1,0 m (~15,9 px/m); precisão ~0,1 m",
+  "sensores": [
+    [20.72, 20.61], [8.66, 20.46],
+    [27.35, 16.33], [3.02, 14.55], [8.59, 14.55], [22.44, 14.52],
+    [20.56, 7.63], [9.47, 7.47],
+    [17.51, 3.53], [10.44, 3.52], [3.52, 3.50], [24.59, 3.47]
+  ]
+}

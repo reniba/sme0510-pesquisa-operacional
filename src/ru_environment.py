@@ -46,6 +46,7 @@ class AmbienteRU(Ambiente):
     divisorias: list = field(default_factory=list)   # paredes internas (x1, y1, x2, y2)
     linha_de_visada: bool = False                    # cobertura bloqueada por paredes
     nome: str = "RU UFSCar"
+    obstaculos: object = None                        # array M x 4 (paredes + divisórias)
     sensor: str = "DHT22"
 
 
@@ -80,6 +81,39 @@ def _cruza(p1, p2, segs):
     return (o1 * o2 < -1e-12) & (o3 * o4 < -1e-12)
 
 
+def _bloqueados(p, Q, segs):
+    """Versão vetorizada de `_cruza`: para um ponto p e vários pontos Q (k x 2), True
+    onde o segmento p-Q[k] cruza propriamente algum segmento de `segs` (M x 4)."""
+    if len(segs) == 0 or len(Q) == 0:
+        return np.zeros(len(Q), dtype=bool)
+    q1, q2 = segs[None, :, :2], segs[None, :, 2:]            # 1 x M x 2
+    a, b = np.asarray(p, float)[None, None, :], np.asarray(Q, float)[:, None, :]  # k x 1 x 2
+
+    def orient(u, v, w):
+        return (v[..., 0] - u[..., 0]) * (w[..., 1] - u[..., 1]) - (v[..., 1] - u[..., 1]) * (w[..., 0] - u[..., 0])
+    o1, o2 = orient(a, b, q1), orient(a, b, q2)
+    o3, o4 = orient(q1, q2, a), orient(q1, q2, b)
+    return ((o1 * o2 < -1e-12) & (o3 * o4 < -1e-12)).any(1)
+
+
+def cobertos_por_coordenadas(env, coords):
+    """Pontos de `env` cobertos por sensores em coordenadas arbitrárias (x, y), com as
+    mesmas regras da matriz N: mesmo cômodo, distância <= raio da zona do ponto e,
+    se ativa, linha de visada. Serve para avaliar a solução de uma malha em outra."""
+    Ic = np.asarray(env.I_coords, float)
+    si = np.asarray(env.sala_i, dtype=object)
+    ri = np.asarray(env.raio_i, float)
+    obst = env.obstaculos if env.obstaculos is not None else np.zeros((0, 4))
+    cob = np.zeros(len(Ic), dtype=bool)
+    for x, y in coords:
+        sala = si[np.argmin(np.hypot(Ic[:, 0] - x, Ic[:, 1] - y))]   # cômodo do sensor
+        cand = np.nonzero((si == sala) & (np.hypot(Ic[:, 0] - x, Ic[:, 1] - y) <= ri + 1e-9) & ~cob)[0]
+        if env.linha_de_visada:
+            cand = cand[~_bloqueados((x, y), Ic[cand], obst)]
+        cob[cand] = True
+    return set(np.nonzero(cob)[0].tolist())
+
+
 def _dist_segmento(x, y, s):
     x1, y1, x2, y2 = s
     dx, dy = x2 - x1, y2 - y1
@@ -87,11 +121,13 @@ def _dist_segmento(x, y, s):
     return math.hypot(x - (x1 + t * dx), y - (y1 + t * dy))
 
 
-def construir_ambiente_ru(caminho=GEOMETRIA, incluir_balcoes=False, suportes=()):
+def construir_ambiente_ru(caminho=GEOMETRIA, incluir_balcoes=False, suportes=(), passo=None, fator_raio=1.0):
     """`suportes`: tipos extras de suporte a ativar (ex.: {"mesa", "balcao"}); cada
     sub-região do JSON pode declarar `"suporte": "<tipo>"` (`true` equivale a "balcao")."""
     with open(caminho, encoding="utf-8") as f:
         g = json.load(f)
+    if passo:  # sobrescreve o passo da malha do JSON (ex.: 0.5 para comparar com 1.0)
+        g["malha"]["step"] = passo
     tipos_ativos = set(suportes) | ({"balcao"} if incluir_balcoes else set())
 
     step = g["malha"]["step"]
@@ -101,7 +137,8 @@ def construir_ambiente_ru(caminho=GEOMETRIA, incluir_balcoes=False, suportes=())
     sensor = g.get("sensor", {"modelo": "DHT22", "erro": g.get("e_dht22", 0.5)})
     e = sensor["erro"]
     malha_candidatos = g.get("candidatos", {}).get("modo") == "malha"
-    S = {k: raio_cobertura(v["dT_max"], v["g_xy"], e) for k, v in g["tipos_raio"].items()}
+    # fator_raio multiplica todos os raios (0.5 = metade; equivale a dobrar o gradiente g_xy)
+    S = {k: fator_raio * raio_cobertura(v["dT_max"], v["g_xy"], e) for k, v in g["tipos_raio"].items()}
     salas = {s["id"]: s for s in g["salas"]}
 
     # --- classificação de cada célula da malha (centros 0,25 + 0,5k) ---
@@ -217,10 +254,10 @@ def construir_ambiente_ru(caminho=GEOMETRIA, incluir_balcoes=False, suportes=())
     N = []
     for i in range(len(I_coords)):
         d = np.hypot(Jc[:, 0] - Ic[i, 0], Jc[:, 1] - Ic[i, 1])
-        js = [int(j) for j in np.nonzero((sj == si[i]) & (d <= ri[i] + 1e-9))[0]]
+        js = np.nonzero((sj == si[i]) & (d <= ri[i] + 1e-9))[0]
         if visada:  # a reta sensor-ponto não pode atravessar parede nem divisória
-            js = [j for j in js if not _cruza(Ic[i], Jc[j], obst).any()]
-        N.append(js)
+            js = js[~_bloqueados(Ic[i], Jc[js], obst)]
+        N.append([int(j) for j in js])
 
     grupos = {nome: [i for i, gi in enumerate(grupo_i) if gi == nome] for nome in g["grupos"]}
     obrig = [(s["id"], s["nome"], [j for j, sj_ in enumerate(sala_j) if sj_ == s["id"]])
@@ -234,6 +271,6 @@ def construir_ambiente_ru(caminho=GEOMETRIA, incluir_balcoes=False, suportes=())
         paredes=paredes, portas=portas, equipamentos=equip, pilares=g["pilares"],
         raio_porta=raio_porta, step=step, largura=W, comprimento=L, z_ref=g["malha"]["z_ref"],
         nao_cobriveis=[i for i, n in enumerate(N) if not n],
-        tipo_j=tipo_j, divisorias=divisorias, linha_de_visada=visada,
+        tipo_j=tipo_j, divisorias=divisorias, linha_de_visada=visada, obstaculos=obst,
         nome=g.get("meta", {}).get("nome", "RU UFSCar"), sensor=sensor["modelo"],
     )

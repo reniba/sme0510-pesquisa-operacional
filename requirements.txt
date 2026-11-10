@@ -1,0 +1,6 @@
+# Python 3.12+ (testado com 3.14). PuLP precisa ser 3.x: a 4.x não traz mais o solver CBC.
+numpy==2.5.4
+pandas==3.1.1
+matplotlib==3.11.2
+pillow==13.0.0
+PuLP>=3.3,<4
